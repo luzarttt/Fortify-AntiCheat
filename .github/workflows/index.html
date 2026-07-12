@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fortify AntiCheat — Advanced Anti-Cheat System v2.0.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.85);
+            --blue-deep: #0a1628;
+            --blue-primary: #0b4b8a;
+            --blue-accent: #1e90ff;
+            --blue-glow: #3b82f6;
+            --blue-light: #60a5fa;
+            --cyan-glow: #22d3ee;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-glow: rgba(59, 130, 246, 0.3);
+            --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.15);
+            --radius: 20px;
+            --transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--blue-accent);
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--blue-glow);
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 16px 0;
+            background: rgba(10, 14, 26, 0.7);
+            backdrop-filter: blur(20px) saturate(1.2);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            transition: var(--transition);
+        }
+        .navbar.scrolled {
+            background: rgba(10, 14, 26, 0.9);
+            border-bottom-color: rgba(59, 130, 246, 0.25);
+            box-shadow: 0 4px 40px rgba(0, 0, 0, 0.5);
+        }
+        .navbar .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .navbar-brand i {
+            font-size: 1.8rem;
+            color: var(--blue-accent);
+            filter: drop-shadow(0 0 20px var(--blue-glow));
+        }
+        .navbar-brand .badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            background: var(--blue-accent);
+            color: #fff;
+            padding: 2px 12px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 20px var(--blue-glow);
+        }
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+        .navbar-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            position: relative;
+        }
+        .navbar-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--blue-accent);
+            transition: var(--transition);
+            box-shadow: 0 0 12px var(--blue-glow);
+        }
+        .navbar-links a:hover {
+            color: var(--text-primary);
+        }
+        .navbar-links a:hover::after {
+            width: 100%;
+        }
+        .navbar-cta {
+            background: var(--blue-accent);
+            color: #fff !important;
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            transition: var(--transition);
+        }
+        .navbar-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.5);
+        }
+        .navbar-cta::after {
+            display: none !important;
+        }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 4px;
+        }
+        .hamburger span {
+            width: 28px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .hero {
+            padding: 140px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .hero-content {
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--blue-light);
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 6px 18px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            animation: fadeUp 1s ease 0.2s both;
+        }
+        .hero-badge i {
+            font-size: 0.9rem;
+        }
+        .hero-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 3.8rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            animation: fadeUp 1s ease 0.4s both;
+        }
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--blue-accent), var(--cyan-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-title .version {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            -webkit-text-fill-color: var(--text-secondary);
+            background: none;
+        }
+        .hero-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin-bottom: 32px;
+            animation: fadeUp 1s ease 0.6s both;
+            line-height: 1.8;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            animation: fadeUp 1s ease 0.8s both;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 34px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary {
+            background: var(--blue-accent);
+            color: #fff;
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 0 60px rgba(59, 130, 246, 0.5);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .btn-outline:hover {
+            border-color: var(--blue-accent);
+            background: rgba(59, 130, 246, 0.08);
+            transform: translateY(-3px);
+        }
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeUp 1s ease 1s both;
+        }
+        .hero-stats .stat {
+            text-align: left;
+        }
+        .hero-stats .stat .number {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--blue-accent), var(--cyan-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-stats .stat .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            -webkit-text-fill-color: var(--text-secondary);
+        }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeUp 1s ease 0.6s both;
+        }
+        .hero-visual .shield {
+            width: 100%;
+            max-width: 420px;
+            aspect-ratio: 1/1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .shield-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(59, 130, 246, 0.15);
+            animation: spin 20s linear infinite;
+        }
+        .shield-ring:nth-child(2) {
+            width: 85%;
+            height: 85%;
+            animation-duration: 15s;
+            animation-direction: reverse;
+            border-color: rgba(34, 211, 238, 0.1);
+        }
+        .shield-ring:nth-child(3) {
+            width: 70%;
+            height: 70%;
+            animation-duration: 10s;
+            border-color: rgba(59, 130, 246, 0.08);
+        }
+        .shield-center {
+            position: relative;
+            z-index: 2;
+            width: 55%;
+            height: 55%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.2), rgba(10, 22, 40, 0.9));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 2.2rem;
+            color: var(--blue-accent);
+            text-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 80px rgba(59, 130, 246, 0.1), inset 0 0 60px rgba(59, 130, 246, 0.05);
+        }
+        .shield-center i {
+            font-size: 4rem;
+            filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.3));
+        }
+        .shield-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            animation: pulse-ring 3s ease-out infinite;
+        }
+        .shield-pulse:nth-child(4) {
+            animation-delay: 1s;
+        }
+        .shield-pulse:nth-child(5) {
+            animation-delay: 2s;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-title h2 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 2.6rem;
+            letter-spacing: 1px;
+        }
+        .section-title h2 .highlight {
+            background: linear-gradient(135deg, var(--blue-accent), var(--cyan-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-title p {
+            color: var(--text-secondary);
+            margin-top: 12px;
+            font-size: 1.05rem;
+        }
+
+        .features {
+            padding: 80px 0;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--blue-accent), transparent);
+            opacity: 0.2;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius);
+            padding: 36px 28px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.05), transparent 70%);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(59, 130, 246, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(59, 130, 246, 0.05);
+        }
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        .feature-card .icon {
+            font-size: 2.4rem;
+            margin-bottom: 16px;
+            display: inline-block;
+            color: var(--blue-accent);
+            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.15));
+        }
+        .feature-card h3 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .feature-card .tag {
+            display: inline-block;
+            margin-top: 14px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--blue-light);
+            background: rgba(59, 130, 246, 0.08);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .version-highlights {
+            padding: 80px 0;
+            background: var(--bg-primary);
+        }
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+        }
+        .highlight-item {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: var(--radius);
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: var(--transition);
+        }
+        .highlight-item:hover {
+            border-color: rgba(59, 130, 246, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        .highlight-item .icon {
+            font-size: 2.6rem;
+            display: block;
+            margin-bottom: 12px;
+            color: var(--blue-accent);
+        }
+        .highlight-item h4 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+        .highlight-item p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        .security-status {
+            padding: 80px 0;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+        .security-status::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--blue-accent), transparent);
+            opacity: 0.15;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        .status-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+        .status-visual .shield-small {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.1), rgba(10, 22, 40, 0.9));
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: var(--blue-accent);
+            box-shadow: 0 0 80px rgba(59, 130, 246, 0.05);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        .status-visual .shield-small i {
+            font-size: 5rem;
+        }
+        .status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: var(--transition);
+        }
+        .status-item:hover {
+            border-color: rgba(59, 130, 246, 0.15);
+            transform: translateX(6px);
+        }
+        .status-item .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .status-item .dot.green {
+            background: #22c55e;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+        .status-item .dot.blue {
+            background: var(--blue-accent);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        .status-item .dot.cyan {
+            background: var(--cyan-glow);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+        }
+        .status-item .info h4 {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .status-item .info h4 i {
+            margin-right: 6px;
+            color: var(--blue-accent);
+        }
+        .status-item .info p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .cta {
+            padding: 80px 0 100px;
+            background: var(--bg-primary);
+            text-align: center;
+            position: relative;
+        }
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--blue-accent), transparent);
+            opacity: 0.15;
+        }
+        .cta h2 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 2.6rem;
+            margin-bottom: 16px;
+        }
+        .cta p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+        .cta .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .footer {
+            padding: 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            background: var(--bg-primary);
+        }
+        .footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .footer .brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+        .footer .brand i {
+            color: var(--blue-accent);
+            margin-right: 6px;
+        }
+        .footer .brand span {
+            color: var(--blue-accent);
+        }
+        .footer p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .footer .socials {
+            display: flex;
+            gap: 18px;
+        }
+        .footer .socials a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+        .footer .socials a:hover {
+            color: var(--blue-accent);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 60px rgba(59, 130, 246, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 100px rgba(59, 130, 246, 0.15);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+        .reveal-delay-4 {
+            transition-delay: 0.4s;
+        }
+
+        @media (max-width: 992px) {
+            .hero .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-desc {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .hero-stats {
+                justify-content: center;
+            }
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            .status-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .status-item {
+                justify-content: center;
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-links {
+                display: none;
+                flex-direction: column;
+                gap: 16px;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(10, 14, 26, 0.95);
+                backdrop-filter: blur(20px);
+                padding: 24px 32px;
+                border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            }
+            .navbar-links.open {
+                display: flex;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .highlights-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .highlights-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: 16px;
+                align-items: center;
+            }
+            .hero-stats .stat {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+    <div class="grid-overlay"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="#" class="navbar-brand">
+                <i class="fas fa-shield-halved"></i> Fortify
+                <span class="badge">v2.0.0</span>
+            </a>
+            <ul class="navbar-links" id="navLinks">
+                <li><a href="#features"><i class="fas fa-cog"></i> Features</a></li>
+                <li><a href="#highlights"><i class="fas fa-star"></i> Highlights</a></li>
+                <li><a href="#security"><i class="fas fa-lock"></i> Status</a></li>
+                <li><a href="#cta" class="navbar-cta"><i class="fas fa-rocket"></i> Deploy</a></li>
+            </ul>
+            <button class="hamburger" id="hamburger" aria-label="Navigation menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-bolt"></i> Next-Gen Anti-Cheat Engine
+                </div>
+                <h1 class="hero-title">
+                    Fortify<br />
+                    <span class="highlight">AntiCheat</span>
+                    <span class="version">v2.0.0</span>
+                </h1>
+                <p class="hero-desc">
+                    Advanced anti-cheat system built for FiveM servers. Version 2.0.0 delivers
+                    enhanced detection accuracy, optimized performance, and rock-solid security
+                    to protect your game environment.
+                </p>
+                <div class="hero-actions">
+                    <a href="#cta" class="btn btn-primary"><i class="fas fa-rocket"></i> Get Started</a>
+                    <a href="#features" class="btn btn-outline">Explore Features <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="number">99.7%</div>
+                        <div class="label">Detection Accuracy</div>
+                    </div>
+                    <div class="stat">
+                        <div class="number">&lt;5ms</div>
+                        <div class="label">Avg. Latency</div>
+                    </div>
+                    <div class="stat">
+                        <div class="number">24/7</div>
+                        <div class="label">Real-time Protection</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="shield">
+                    <div class="shield-ring"></div>
+                    <div class="shield-ring"></div>
+                    <div class="shield-ring"></div>
+                    <div class="shield-pulse"></div>
+                    <div class="shield-pulse"></div>
+                    <div class="shield-pulse"></div>
+                    <div class="shield-center">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title reveal">
+                <h2><i class="fas fa-cogs" style="color: var(--blue-accent);"></i> Core <span class="highlight">Features</span></h2>
+                <p>Providing comprehensive, multi-layered anti-cheat protection for FiveM servers.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="icon"><i class="fas fa-brain"></i></div>
+                    <h3>AI Behavior Analysis</h3>
+                    <p>Machine-learning driven real-time player behavior analysis to accurately identify anomalies and cheating patterns.</p>
+                    <span class="tag">v2.0.0 Enhanced</span>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="icon"><i class="fas fa-lock"></i></div>
+                    <h3>Memory Integrity Protection</h3>
+                    <p>Deep game memory scanning to detect and block injections, hooks, and other common attack vectors.</p>
+                    <span class="tag">Kernel-Level</span>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="icon"><i class="fas fa-chart-pie"></i></div>
+                    <h3>Real-Time Monitoring</h3>
+                    <p>Intuitive web dashboard providing live server security status and detailed violation event logs.</p>
+                    <span class="tag">Visualized</span>
+                </div>
+                <div class="feature-card reveal reveal-delay-4">
+                    <div class="icon"><i class="fas fa-bolt"></i></div>
+                    <h3>Ultra-Low Overhead</h3>
+                    <p>Highly optimized detection engine with an average latency under 5ms, ensuring a smooth gameplay experience.</p>
+                    <span class="tag">Efficient</span>
+                </div>
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="icon"><i class="fas fa-sync-alt"></i></div>
+                    <h3>Auto-Updating</h3>
+                    <p>Cloud-based signature library syncs in real-time to rapidly counter new cheat tools without manual intervention.</p>
+                    <span class="tag">Smart</span>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="icon"><i class="fas fa-clipboard-list"></i></div>
+                    <h3>Detailed Audit Logs</h3>
+                    <p>Complete cheat detection records with evidence chains, supporting export and analysis for compliance.</p>
+                    <span class="tag">Compliant</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="version-highlights" id="highlights">
+        <div class="container">
+            <div class="section-title reveal">
+                <h2><i class="fas fa-rocket" style="color: var(--blue-accent);"></i> v2.0.0 <span class="highlight">Highlights</span></h2>
+                <p>This update focuses on a comprehensive leap in security, performance, and stability.</p>
+            </div>
+            <div class="highlights-grid">
+                <div class="highlight-item reveal reveal-delay-1">
+                    <span class="icon"><i class="fas fa-shield-halved"></i></span>
+                    <h4>+35% Accuracy</h4>
+                    <p>AI model upgrade reduces false positives by 62%</p>
+                </div>
+                <div class="highlight-item reveal reveal-delay-2">
+                    <span class="icon"><i class="fas fa-gauge-high"></i></span>
+                    <h4>+40% Performance</h4>
+                    <p>Optimized resource usage supports larger server loads</p>
+                </div>
+                <div class="highlight-item reveal reveal-delay-3">
+                    <span class="icon"><i class="fas fa-shield"></i></span>
+                    <h4>Hardened Security</h4>
+                    <p>New memory anti-injection and anti-debugging protections</p>
+                </div>
+                <div class="highlight-item reveal reveal-delay-4">
+                    <span class="icon"><i class="fas fa-chart-simple"></i></span>
+                    <h4>Brand New Dashboard</h4>
+                    <p>Real-time monitoring with visualized analytics</p>
+                </div>
+                <div class="highlight-item reveal reveal-delay-1">
+                    <span class="icon"><i class="fas fa-cloud"></i></span>
+                    <h4>Cloud Sync</h4>
+                    <p>Threat signature database updates instantly</p>
+                </div>
+                <div class="highlight-item reveal reveal-delay-2">
+                    <span class="icon"><i class="fas fa-puzzle-piece"></i></span>
+                    <h4>Enhanced Compatibility</h4>
+                    <p>Supports latest FiveM builds and plugin ecosystems</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="security-status" id="security">
+        <div class="container">
+            <div class="section-title reveal">
+                <h2><i class="fas fa-circle-check" style="color: #22c55e;"></i> Security <span class="highlight">Status</span></h2>
+                <p>Real-time protection module status overview.</p>
+            </div>
+            <div class="status-grid">
+                <div class="status-visual reveal">
+                    <div class="shield-small">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                </div>
+                <div class="status-list reveal">
+                    <div class="status-item">
+                        <span class="dot green"></span>
+                        <div class="info">
+                            <h4><i class="fas fa-brain"></i> AI Behavior Detection</h4>
+                            <p>Active · Analyzing 1,247 player behaviors</p>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="dot green"></span>
+                        <div class="info">
+                            <h4><i class="fas fa-memory"></i> Memory Integrity</h4>
+                            <p>Secure · No abnormal injections detected</p>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="dot blue"></span>
+                        <div class="info">
+                            <h4><i class="fas fa-network-wired"></i> Network Traffic</h4>
+                            <p>Normal · Packet validation rate 99.8%</p>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="dot cyan"></span>
+                        <div class="info">
+                            <h4><i class="fas fa-cloud-upload-alt"></i> Cloud Signature Library</h4>
+                            <p>Synchronized · Latest threat database (2026-07-12)</p>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="dot green"></span>
+                        <div class="info">
+                            <h4><i class="fas fa-file-alt"></i> Audit Logs</h4>
+                            <p>Recording · 23 security events processed today</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta" id="cta">
+        <div class="container">
+            <h2 class="reveal"><i class="fas fa-shield-halved" style="color: var(--blue-accent);"></i> Protect Your <span class="highlight">Server</span></h2>
+            <p class="reveal">Join hundreds of FiveM servers already trusting Fortify AntiCheat for peace of mind and robust security.</p>
+            <div class="btn-group reveal">
+                <a href="#" class="btn btn-primary"><i class="fas fa-server"></i> Deploy to Server</a>
+                <a href="#" class="btn btn-outline"><i class="fas fa-book"></i> View Docs</a>
+                <a href="#" class="btn btn-outline"><i class="fas fa-comments"></i> Join Community</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="brand"><i class="fas fa-shield-halved"></i> Fortify <span>AntiCheat</span> v2.0.0</div>
+            <p>&copy; 2026 Fortify Team · Built for FiveM Servers</p>
+            <div class="socials">
+                <a href="https://github.com/luzarttt" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            const COUNT = 80;
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.size = Math.random() * 1.8 + 0.6;
+                    this.speedX = (Math.random() - 0.5) * 0.4;
+                    this.speedY = (Math.random() - 0.5) * 0.4;
+                    this.opacity = Math.random() * 0.5 + 0.1;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(59, 130, 246, ${this.opacity})`;
+                    ctx.fill();
+                    if (this.size > 1.2) {
+                        ctx.shadowColor = 'rgba(59, 130, 246, 0.2)';
+                        ctx.shadowBlur = 12;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
+
+            for (let i = 0; i < COUNT; i++) {
+                particles.push(new Particle());
+            }
+
+            function drawLines() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150) {
+                            const alpha = 0.08 * (1 - dist / 150);
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(59, 130, 246, ${alpha})`;
+                            ctx.lineWidth = 0.6;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => { p.update();
+                    p.draw(); });
+                drawLines();
+                requestAnimationFrame(animate);
+            }
+            animate();
+        })();
+
+        const navbar = document.getElementById('navbar');
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const current = window.scrollY;
+            if (current > 20) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            lastScroll = current;
+        });
+
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+        });
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('open');
+            });
+        });
+
+        const revealElements = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        revealElements.forEach(el => observer.observe(el));
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const targetEl = document.querySelector(targetId);
+                if (targetEl) {
+                    e.preventDefault();
+                    const offsetTop = targetEl.getBoundingClientRect().top + window.pageYOffset - 80;
+                    window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                }
+            });
+        });
+
+        console.log('%c🛡️ Fortify AntiCheat v2.0.0',
+            'font-size:20px; font-weight:bold; color:#1e90ff; text-shadow:0 0 20px #1e90ff;');
+        console.log('%cAdvanced Anti-Cheat System · Built for FiveM Servers', 'font-size:14px; color:#94a3b8;');
+    </script>
+
+</body>
+</html>
